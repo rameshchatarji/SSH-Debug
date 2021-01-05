@@ -17,7 +17,6 @@ jobs:
          run: |
            git config --global user.name "Alone"
            git config --global user.email "rameshchatarji@gmail.com"
-           brew cask install docker
        - name: Cloning Repository & Setting Up Configs
          continue-on-error: true
          run: |
@@ -34,8 +33,10 @@ jobs:
          continue-on-error: true
          run: |
            cd source
-           docker container prune --force
-           docker build . -t mirror-bot
+           python3 -m venv venv
+           . ./venv/bin/activate
+           pip3 install -r requirements.txt
+           python3 -m bot
        - name: Running Mirror Bot
          timeout-minutes: 340
          continue-on-error: true
