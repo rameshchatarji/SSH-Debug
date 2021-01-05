@@ -40,7 +40,7 @@ jobs:
          timeout-minutes: 340
          continue-on-error: true
          run: |
-           python3 -m bot
+           bash start.sh
        - name: Loop Workflow
          continue-on-error: true
          run: |
