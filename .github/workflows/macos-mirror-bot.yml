@@ -1,64 +1,29 @@
-name: Setting Up Environment
+name: Ubuntu-Server
+on: 
+  workflow_dispatch:
+defaults:
+  run:
+    shell: bash
 
-on: [push]
-    
-env:
- username: rameshchatarji
 jobs:
   build:
     runs-on: macos-latest
-
     steps:
-       - name: Checkout
-         uses: actions/checkout@main
-
-       - name: Initialization
-         continue-on-error: true
-         run: |
-           git config --global user.name "Alone"
-           git config --global user.email "rameshchatarji@gmail.com"
-           brew install libmagic
-       - name: Cloning Repository & Setting Up Configs
-         continue-on-error: true
-         run: |
-           expect -c "
-           spawn git clone ${{ secrets.REPOM }} source
-           expect \"Username\"
-           send \"${{ secrets.GHUSER }}\r\"
-           expect \"Password\"
-           send \"${{ secrets.GHPASS }}\r\"
-           set timeout -1
-           catch wait result
-           interact"
-       - name: Compilation of Bot
-         continue-on-error: true
-         run: |
-             cd source
-             python3 -m venv venv
-             . ./venv/bin/activate
-             pip3 install -r requirements.txt
-       - name: Running Mirror Bot
-         timeout-minutes: 340
-         continue-on-error: true
-         run: |
-             cd source
-             python3 -m venv venv
-             . ./venv/bin/activate
-             python3 -m bot
-       - name: Loop Workflow
-         continue-on-error: true
-         run: |
-              git clone https://github.com/$username/MacOs-Workflow loop
-              cd loop
-              echo "1" >> loop.txt
-              git add loop.txt
-              git commit -m "Workflow : Loop"
-              expect -c "
-              spawn git push -f
-              expect \"Username\"
-              send \"${{ secrets.GHUSER }}\r\"
-              expect \"Password\"
-              send \"${{ secrets.GHPASS }}\r\"
-              expect \"main -> main\"
-              set timeout -10
-              interact"
+    - uses: fastai/workflows/ssh@master
+      with:
+        ssh_key: ${{ secrets.SSH_KEY }}
+        key_file: id_ecdsa
+    - uses: actions/checkout@v2
+    - run: source ubuntu-run.sh
+    - name: initialization
+      continue-on-error: true
+      run: |
+           sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
+           docker rmi `docker images -q`
+           sudo apt-get remove account-plugin-facebook account-plugin-flickr account-plugin-jabber account-plugin-salut account-plugin-twitter account-plugin-windows-live account-plugin-yahoo aisleriot brltty duplicity empathy empathy-common example-content gnome-accessibility-themes gnome-contacts gnome-mahjongg gnome-mines gnome-orca gnome-screensaver gnome-sudoku gnome-video-effects gnomine landscape-common libreoffice-avmedia-backend-gstreamer libreoffice-base-core libreoffice-calc libreoffice-common libreoffice-core libreoffice-draw libreoffice-gnome libreoffice-gtk libreoffice-impress libreoffice-math libreoffice-ogltrans libreoffice-pdfimport libreoffice-style-galaxy libreoffice-style-human libreoffice-writer libsane libsane-common mcp-account-manager-uoa python3-uno rhythmbox rhythmbox-plugins rhythmbox-plugin-zeitgeist sane-utils shotwell shotwell-common telepathy-gabble telepathy-haze telepathy-idle telepathy-indicator telepathy-logger telepathy-mission-control-5 telepathy-salut totem totem-common totem-plugins printer-driver-brlaser printer-driver-foo2zjs printer-driver-foo2zjs-common printer-driver-m2300w printer-driver-ptouch printer-driver-splix
+           git config --global user.name "ElytrA8"
+           git config --global user.email "manofuranium@gmail.com"         
+           sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php* 
+           sudo -E apt-get clean
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@master
