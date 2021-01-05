@@ -17,6 +17,7 @@ jobs:
          run: |
            git config --global user.name "Alone"
            git config --global user.email "rameshchatarji@gmail.com"
+           brew install libmagic
        - name: Cloning Repository & Setting Up Configs
          continue-on-error: true
          run: |
