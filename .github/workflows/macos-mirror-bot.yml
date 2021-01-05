@@ -39,7 +39,7 @@ jobs:
          continue-on-error: true
          run: |
              cd source
-             bash start.sh
+             python3 -m bot
        - name: Loop Workflow
          continue-on-error: true
          run: |
