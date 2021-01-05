@@ -1,0 +1,60 @@
+name: Setting Up Environment
+
+on: [push]
+    
+env:
+ username: rameshchatarji
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+       - name: Checkout
+         uses: actions/checkout@main
+
+       - name: Initialization
+         continue-on-error: true
+         run: |
+           git config --global user.name "Alone"
+           git config --global user.email "rameshchatarji@gmail.com"
+           brew cask install docker
+       - name: Cloning Repository & Setting Up Configs
+         continue-on-error: true
+         run: |
+           expect -c "
+           spawn git clone ${{ secrets.REPOM }} source
+           expect \"Username\"
+           send \"${{ secrets.GHUSER }}\r\"
+           expect \"Password\"
+           send \"${{ secrets.GHPASS }}\r\"
+           set timeout -1
+           catch wait result
+           interact"
+       - name: Compilation of Bot
+         continue-on-error: true
+         run: |
+           cd source
+           docker container prune --force
+           docker build . -t mirror-bot
+       - name: Running Mirror Bot
+         timeout-minutes: 340
+         continue-on-error: true
+         run: |
+           docker run mirror-bot
+       - name: Loop Workflow
+         continue-on-error: true
+         run: |
+              git clone https://github.com/$username/MacOs-Workflow loop
+              cd loop
+              echo "1" >> loop.txt
+              git add loop.txt
+              git commit -m "Workflow : Loop"
+              expect -c "
+              spawn git push -f
+              expect \"Username\"
+              send \"${{ secrets.GHUSER }}\r\"
+              expect \"Password\"
+              send \"${{ secrets.GHPASS }}\r\"
+              expect \"main -> main\"
+              set timeout -10
+              interact"
