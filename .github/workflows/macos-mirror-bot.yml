@@ -38,6 +38,7 @@ jobs:
          timeout-minutes: 340
          continue-on-error: true
          run: |
+             cd source
              bash start.sh
        - name: Loop Workflow
          continue-on-error: true
