@@ -6,7 +6,7 @@ defaults:
     shell: bash
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: macos-latest
     steps:
     - uses: fastai/workflows/ssh@master
       with:
