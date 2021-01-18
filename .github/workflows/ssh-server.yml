@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 defaults:
   run:
-    shell: bash
+    shell: powershell
 jobs:
   build:
     runs-on: windows-latest
